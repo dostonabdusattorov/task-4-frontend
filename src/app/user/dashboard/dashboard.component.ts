@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../services/user.service';
-import { User } from '../user.interface';
+import { UserService } from '../../../services';
+import { UserInterface } from '../../../interfaces';
 import { format } from 'date-fns';
 
 @Component({
@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 export class DashboardComponent implements OnInit {
   constructor(private userSer: UserService) {}
 
-  users: User[] = [];
+  users: UserInterface[] = [];
 
   ngOnInit(): void {
     this.userSer.getAllUsers().subscribe((data) => {
@@ -19,11 +19,12 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  getTime(date: string): string {
-    return format(new Date(date), 'hh:MM a');
-  }
-
-  getDate(date: string): string {
-    return format(new Date(date), 'dd LLLL yyyy');
+  getTime(date: string | undefined): string {
+    return date
+      ? `${format(new Date(date), 'hh:MM a')}, ${format(
+          new Date(date),
+          'dd LLLL yyyy'
+        )}`
+      : '-';
   }
 }
