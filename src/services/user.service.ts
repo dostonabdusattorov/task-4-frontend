@@ -15,6 +15,8 @@ export class UserService {
       'Authorization',
       'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywibmFtZSI6ImRvc3RvbiIsImVtYWlsIjoidGVzdDNAdGVzdDMuY29tIiwicGFzc3dvcmQiOiJhNzY5OTY3MTQ1ZDUyMjkzLjU1OTk5OGU5Y2VlZTkyMzI4MmY3NjgwM2VkZGIyZjVlNjQ1MmM2YjJiZGM3ZDdkOWU5ZmY1YTZjNTczOWE2N2IiLCJsYXN0TG9naW5UaW1lIjoiVHVlIEp1biAwNiAyMDIzIDE0OjAwOjQ4IEdNVCswNTAwIChVemJla2lzdGFuIFN0YW5kYXJkIFRpbWUpIiwicmVnaXN0cmF0aW9uVGltZSI6IlR1ZSBKdW4gMDYgMjAyMyAxMjozNTowMSBHTVQrMDUwMCAoVXpiZWtpc3RhbiBTdGFuZGFyZCBUaW1lKSIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2ODYwNDIwNDh9._ofhozTskSPLU5IWgQ6PdKzuEbbLXdEsYeDKZCVKYQI'
     );
-    return this.http.get<UserInterface[]>(`${base_url}/users/`, { headers });
+    return this.http.get<UserInterface[]>(`${base_url}/users`, {
+      headers,
+    });
   }
 }

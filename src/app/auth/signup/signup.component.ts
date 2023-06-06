@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Route, Router } from '@angular/router';
 import { AuthService } from 'src/services';
 
 @Component({
@@ -10,7 +11,7 @@ export class SignupComponent {
   signupForm!: FormGroup;
   httpError: any;
 
-  constructor(private authSer: AuthService) {}
+  constructor(private authSer: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.signupForm = new FormGroup({
@@ -24,9 +25,9 @@ export class SignupComponent {
     if (this.signupForm.valid) {
       const body = this.signupForm.value;
       this.authSer.signup(body.name, body.email, body.password).subscribe({
-        next: (data) => {
+        next: () => {
           this.httpError = null;
-          console.log(data);
+          this.router.navigate(['auth/signin']);
         },
         error: ({ error }) => {
           this.httpError = error;

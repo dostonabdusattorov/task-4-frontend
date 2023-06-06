@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 export class DashboardComponent implements OnInit {
   constructor(private userSer: UserService) {}
 
-  users: UserInterface[] = [];
+  users!: UserInterface[];
 
   ngOnInit(): void {
     this.userSer.getAllUsers().subscribe((data) => {
