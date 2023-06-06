@@ -1,4 +1,4 @@
-<div class="w-full h-screen flex items-center justify-center bg-gray-400">
+<div class="w-full h-screen flex items-center justify-center">
   <form
     [formGroup]="signupForm"
     (ngSubmit)="onSubmit()"
@@ -33,7 +33,7 @@
     </div>
     <div class="mb-4">
       <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
-        Email
+        Email *
       </label>
       <input
         formControlName="email"
