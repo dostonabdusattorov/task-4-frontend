@@ -8,6 +8,7 @@ import { AuthService } from 'src/services';
 })
 export class SignupComponent {
   signupForm!: FormGroup;
+  httpError: any;
 
   constructor(private authSer: AuthService) {}
 
@@ -20,15 +21,17 @@ export class SignupComponent {
   }
 
   onSubmit() {
-    console.log('submit');
-
     if (this.signupForm.valid) {
       const body = this.signupForm.value;
-      this.authSer
-        .signup(body.name, body.email, body.password)
-        .subscribe((data) => {
+      this.authSer.signup(body.name, body.email, body.password).subscribe({
+        next: (data) => {
+          this.httpError = null;
           console.log(data);
-        });
+        },
+        error: ({ error }) => {
+          this.httpError = error;
+        },
+      });
     }
   }
 }
