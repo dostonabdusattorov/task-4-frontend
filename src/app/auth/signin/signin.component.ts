@@ -22,19 +22,22 @@ export class SigninComponent implements OnInit {
   }
 
   onSubmit() {
-    this.isLoading = false;
-
     if (this.signinForm.valid) {
       const body = this.signinForm.value;
+      this.isLoading = true;
       this.authSer.signin(body.email, body.password).subscribe({
         next: (data) => {
           localStorage.setItem('token', data['access_token']);
           localStorage.setItem('user_email', data['user'].email);
-          this.isLoading = true;
+          this.isLoading = false;
           this.router.navigate(['users']);
         },
         error: ({ error }) => {
           this.httpError = error;
+          this.isLoading = false;
+        },
+        complete: () => {
+          this.isLoading = false;
         },
       });
     }

@@ -26,13 +26,22 @@ export class DashboardComponent implements OnInit {
   onInit() {
     this.httpStatus = { ...this.httpStatus, isLoading: true };
 
-    this.userSer.getAllUsers().subscribe((data) => {
-      this.users = data;
-      this.httpStatus = {
-        isLoading: false,
-        isUpdating: false,
-        isDeleting: false,
-      };
+    this.userSer.getAllUsers().subscribe({
+      next: (data) => {
+        this.users = data;
+        this.httpStatus = {
+          isLoading: false,
+          isUpdating: false,
+          isDeleting: false,
+        };
+      },
+      error: () => {
+        this.httpStatus = {
+          isLoading: false,
+          isUpdating: false,
+          isDeleting: false,
+        };
+      },
     });
   }
 
@@ -60,10 +69,14 @@ export class DashboardComponent implements OnInit {
         } else {
           this.onInit();
         }
+        this.httpStatus = { ...this.httpStatus, isUpdating: false };
       },
-      error: (error) => console.log(error),
+      error: (error) => {
+        this.httpStatus = { ...this.httpStatus, isUpdating: false };
+        console.log(error);
+      },
       complete: () => {
-        this.httpStatus = { ...this.httpStatus, isLoading: false };
+        this.httpStatus = { ...this.httpStatus, isUpdating: false };
       },
     });
   }
@@ -78,8 +91,12 @@ export class DashboardComponent implements OnInit {
         } else {
           this.onInit();
         }
+        this.httpStatus = { ...this.httpStatus, isDeleting: false };
       },
-      error: (error) => console.log(error),
+      error: (error) => {
+        this.httpStatus = { ...this.httpStatus, isDeleting: false };
+        console.log(error);
+      },
       complete: () => {
         this.httpStatus = { ...this.httpStatus, isDeleting: false };
       },

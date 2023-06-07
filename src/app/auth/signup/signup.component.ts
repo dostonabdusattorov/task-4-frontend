@@ -29,11 +29,15 @@ export class SignupComponent {
       this.authSer.signup(body.name, body.email, body.password).subscribe({
         next: () => {
           this.httpError = null;
-          this.isLoading = false;
           this.router.navigate(['auth/signin']);
+          this.isLoading = false;
         },
         error: ({ error }) => {
           this.httpError = error;
+          this.isLoading = false;
+        },
+        complete: () => {
+          this.isLoading = false;
         },
       });
     }
