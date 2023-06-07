@@ -131,7 +131,7 @@ export class DashboardComponent implements OnInit {
 
   getTime(date: string | undefined): string {
     return date
-      ? `${format(new Date(date), 'hh:MM a')}, ${format(
+      ? `${format(new Date(date), 'hh:mm a')}, ${format(
           new Date(date),
           'dd LLLL yyyy'
         )}`
