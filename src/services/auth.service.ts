@@ -34,5 +34,10 @@ export class AuthService {
 
   signout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('user_email');
+  }
+
+  get isAuthenticatedUser(): boolean {
+    return localStorage.getItem('token') ? true : false;
   }
 }

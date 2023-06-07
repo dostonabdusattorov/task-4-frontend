@@ -9,6 +9,7 @@ import { AuthService } from 'src/services';
 })
 export class SignupComponent {
   signupForm!: FormGroup;
+  isLoading!: boolean;
   httpError: any;
 
   constructor(private authSer: AuthService, private router: Router) {}
@@ -24,9 +25,11 @@ export class SignupComponent {
   onSubmit() {
     if (this.signupForm.valid) {
       const body = this.signupForm.value;
+      this.isLoading = true;
       this.authSer.signup(body.name, body.email, body.password).subscribe({
         next: () => {
           this.httpError = null;
+          this.isLoading = false;
           this.router.navigate(['auth/signin']);
         },
         error: ({ error }) => {

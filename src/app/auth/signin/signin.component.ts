@@ -10,6 +10,7 @@ import { AuthService } from 'src/services';
 export class SigninComponent implements OnInit {
   signinForm!: FormGroup;
   httpError: any;
+  isLoading!: boolean;
 
   constructor(private authSer: AuthService, private router: Router) {}
 
@@ -21,11 +22,15 @@ export class SigninComponent implements OnInit {
   }
 
   onSubmit() {
+    this.isLoading = false;
+
     if (this.signinForm.valid) {
       const body = this.signinForm.value;
       this.authSer.signin(body.email, body.password).subscribe({
         next: (data) => {
           localStorage.setItem('token', data['access_token']);
+          localStorage.setItem('user_email', data['user'].email);
+          this.isLoading = true;
           this.router.navigate(['users']);
         },
         error: ({ error }) => {
