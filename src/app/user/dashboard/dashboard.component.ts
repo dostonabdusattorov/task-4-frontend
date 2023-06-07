@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService, UserService } from '../../../services';
 import { UserInterface } from '../../../interfaces';
 import { format } from 'date-fns';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user',
   templateUrl: './dashboard.component.html',
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   users!: UserInterface[];
   httpStatus = {
     isLoading: false,
@@ -16,6 +17,10 @@ export class DashboardComponent implements OnInit {
     isDeleting: false,
   };
   selectedUsers: UserInterface[] = [];
+
+  getAllUsersSubscription!: Subscription;
+  updateUserSubscription!: Subscription;
+  deleteUserSubscription!: Subscription;
 
   constructor(
     private userSer: UserService,
@@ -26,7 +31,7 @@ export class DashboardComponent implements OnInit {
   onInit() {
     this.httpStatus = { ...this.httpStatus, isLoading: true };
 
-    this.userSer.getAllUsers().subscribe({
+    this.getAllUsersSubscription = this.userSer.getAllUsers().subscribe({
       next: (data) => {
         this.users = data;
         this.httpStatus = {
@@ -59,47 +64,51 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['']);
   }
 
-  onUpdateUser(user: UserInterface): void {
+  onUpdateUser(users: UserInterface[]): void {
     this.httpStatus = { ...this.httpStatus, isUpdating: true };
-    this.userSer.updateUser(user).subscribe({
-      next: (data) => {
-        this.selectedUsers = [];
-        if (data.email === localStorage.getItem('user_email')) {
-          this.onSignout();
-        } else {
-          this.onInit();
-        }
-        this.httpStatus = { ...this.httpStatus, isUpdating: false };
-      },
-      error: (error) => {
-        this.httpStatus = { ...this.httpStatus, isUpdating: false };
-        console.log(error);
-      },
-      complete: () => {
-        this.httpStatus = { ...this.httpStatus, isUpdating: false };
-      },
+    users.forEach((user) => {
+      this.updateUserSubscription = this.userSer.updateUser(user).subscribe({
+        next: (data) => {
+          this.selectedUsers = [];
+          if (data.email === localStorage.getItem('user_email')) {
+            this.onSignout();
+          } else {
+            this.onInit();
+          }
+          this.httpStatus = { ...this.httpStatus, isUpdating: false };
+        },
+        error: (error) => {
+          this.httpStatus = { ...this.httpStatus, isUpdating: false };
+          console.log(error);
+        },
+        complete: () => {
+          this.httpStatus = { ...this.httpStatus, isUpdating: false };
+        },
+      });
     });
   }
 
-  onDeleteUsers(user: UserInterface): void {
+  onDeleteUsers(users: UserInterface[]): void {
     this.httpStatus = { ...this.httpStatus, isDeleting: true };
-    this.userSer.deleteUser(user).subscribe({
-      next: (data) => {
-        this.selectedUsers = [];
-        if (data.email === localStorage.getItem('user_email')) {
-          this.onSignout();
-        } else {
-          this.onInit();
-        }
-        this.httpStatus = { ...this.httpStatus, isDeleting: false };
-      },
-      error: (error) => {
-        this.httpStatus = { ...this.httpStatus, isDeleting: false };
-        console.log(error);
-      },
-      complete: () => {
-        this.httpStatus = { ...this.httpStatus, isDeleting: false };
-      },
+    users.forEach((user) => {
+      this.deleteUserSubscription = this.userSer.deleteUser(user).subscribe({
+        next: (data) => {
+          this.selectedUsers = [];
+          if (data.email === localStorage.getItem('user_email')) {
+            this.onSignout();
+          } else {
+            this.onInit();
+          }
+          this.httpStatus = { ...this.httpStatus, isDeleting: false };
+        },
+        error: (error) => {
+          this.httpStatus = { ...this.httpStatus, isDeleting: false };
+          console.log(error);
+        },
+        complete: () => {
+          this.httpStatus = { ...this.httpStatus, isDeleting: false };
+        },
+      });
     });
   }
 
@@ -136,5 +145,19 @@ export class DashboardComponent implements OnInit {
           'dd LLLL yyyy'
         )}`
       : '-';
+  }
+
+  get isBlockedUserInSelectedUsers(): boolean {
+    return this.selectedUsers.some((user) => !user.isActive);
+  }
+
+  get isActiveUserInSelectedUsers(): boolean {
+    return this.selectedUsers.some((user) => user.isActive);
+  }
+
+  ngOnDestroy(): void {
+    this.getAllUsersSubscription?.unsubscribe();
+    this.updateUserSubscription?.unsubscribe();
+    this.deleteUserSubscription?.unsubscribe();
   }
 }

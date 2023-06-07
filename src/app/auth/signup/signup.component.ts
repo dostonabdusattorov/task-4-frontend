@@ -1,16 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Route, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/services';
 
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit, OnDestroy {
   signupForm!: FormGroup;
   isLoading!: boolean;
   httpError: any;
+
+  private authSubscription!: Subscription;
 
   constructor(private authSer: AuthService, private router: Router) {}
 
@@ -26,20 +29,26 @@ export class SignupComponent {
     if (this.signupForm.valid) {
       const body = this.signupForm.value;
       this.isLoading = true;
-      this.authSer.signup(body.name, body.email, body.password).subscribe({
-        next: () => {
-          this.httpError = null;
-          this.router.navigate(['auth/signin']);
-          this.isLoading = false;
-        },
-        error: ({ error }) => {
-          this.httpError = error;
-          this.isLoading = false;
-        },
-        complete: () => {
-          this.isLoading = false;
-        },
-      });
+      this.authSubscription = this.authSer
+        .signup(body.name, body.email, body.password)
+        .subscribe({
+          next: () => {
+            this.httpError = null;
+            this.router.navigate(['auth/signin']);
+            this.isLoading = false;
+          },
+          error: ({ error }) => {
+            this.httpError = error;
+            this.isLoading = false;
+          },
+          complete: () => {
+            this.isLoading = false;
+          },
+        });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.authSubscription?.unsubscribe();
   }
 }

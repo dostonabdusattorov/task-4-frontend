@@ -15,18 +15,18 @@
       <button
         type="button"
         [disabled]="
-          selectedUsers.length !== 1 ||
+          selectedUsers.length == 0 ||
           httpStatus.isUpdating ||
-          !selectedUsers[0].isActive
+          isBlockedUserInSelectedUsers
         "
         [class]="
           'flex items-center justify-center text-white bg-rose-600 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 ' +
-          ((selectedUsers.length !== 1 ||
+          ((selectedUsers.length === 0 ||
             httpStatus.isUpdating ||
-            !selectedUsers[0].isActive) &&
+            isBlockedUserInSelectedUsers) &&
             'opacity-50 cursor-not-allowed hover:bg-blue-500')
         "
-        (click)="onUpdateUser(selectedUsers[0])"
+        (click)="onUpdateUser(selectedUsers)"
       >
         <svg
           *ngIf="httpStatus.isUpdating"
@@ -50,18 +50,18 @@
       <button
         type="button"
         [disabled]="
-          selectedUsers.length !== 1 ||
+          selectedUsers.length === 0 ||
           httpStatus.isUpdating ||
-          selectedUsers[0].isActive
+          isActiveUserInSelectedUsers
         "
         [class]="
           'flex items-center justify-center text-white bg-rose-600 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 ' +
-          ((selectedUsers.length !== 1 ||
+          ((selectedUsers.length === 0 ||
             httpStatus.isUpdating ||
-            selectedUsers[0].isActive) &&
+            isActiveUserInSelectedUsers) &&
             'opacity-50 cursor-not-allowed hover:bg-blue-500')
         "
-        (click)="onUpdateUser(selectedUsers[0])"
+        (click)="onUpdateUser(selectedUsers)"
       >
         <svg
           *ngIf="httpStatus.isUpdating"
@@ -88,13 +88,13 @@
       </button>
       <button
         type="button"
-        [disabled]="selectedUsers.length !== 1"
+        [disabled]="selectedUsers.length === 0"
         [class]="
           'flex items-center justify-center text-white bg-blue-600 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 ' +
-          (selectedUsers.length !== 1 &&
+          (selectedUsers.length == 0 &&
             'opacity-50 cursor-not-allowed hover:bg-blue-500')
         "
-        (click)="onDeleteUsers(selectedUsers[0])"
+        (click)="onDeleteUsers(selectedUsers)"
       >
         <svg
           *ngIf="httpStatus.isDeleting"
@@ -161,7 +161,7 @@
             <p>{{ getTime(user?.lastLoginTime) }}</p>
           </td>
           <td class="px-6 py-4">
-            <p>{{ getTime(user?.registrationTime) }}</p>
+            <!-- <p>{{ getTime(user?.registrationTime) }}</p> -->
           </td>
           <td class="px-6 py-4">{{ user.isActive ? "Active" : "Blocked" }}</td>
           <td class="px-6 py-4">
